@@ -52,7 +52,7 @@ async function getMarketData(market_id) {
 //idToMarketParams
 async function getMarketParams(market_id) {
   try {
-    const data = await lendingPoolContract.market(market_id);
+    const data = await lendingPoolContract.idToMarketParams(market_id);
     console.log('idToMarketParams')
     console.log(data);
 ;
@@ -68,15 +68,4 @@ getPositionData(market_id, wallet);
 getMarketData(market_id);
 getMarketParams(market_id);
 
-// async function getUserAccountData(userAddress) {
-//   try {
-//     const data = await lendingPoolContract.getUserAccountData(userAddress);
-//     console.log(data);
-// ;
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
 
-// // Replace 'USER_ADDRESS' with the actual user address
-// getUserAccountData(wallet);
