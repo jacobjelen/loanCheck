@@ -1,4 +1,4 @@
-const { ethers } = require('ethers');
+const { Contract, JsonRpcProvider, formatUnits } = require('ethers');
 
 // This is a simplified ABI with only the getUserAccountData function - https://etherscan.io/address/0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb#code
 // market, position, idToMarketParams
@@ -9,9 +9,9 @@ const abi = [
 ];
 
 // get market IDs from https://risk.morpho.org/
-const market_id = '0xc54d7acf14de29e0e5527cabd7a576506870346a78a11a6762e2cca66322ec41' //wstETH/WETH
+const market_id = '0x698fe98247a40c5771537b5786b2f3f9d78eb487b4ce4d75533cd0e94d88a115' //weETH/WETH
 
-const wallet = '0x38989BBA00BDF8181F4082995b3DEAe96163aC5D' //khaled
+const wallet = '0x357dfdC34F93388059D2eb09996d80F233037cBa' //user wallet
 
 // You need to replace these placeholders with actual values
 const INFURA_ID = '22a9f8b97d3f4452a560e1e048aecc4b'
@@ -19,10 +19,10 @@ const providerUrl = `https://mainnet.infura.io/v3/${INFURA_ID}`; //mainnet
 const lendingPoolAddress = '0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb'; // Morpho Blue
 
 // Initialize provider
-const provider = new ethers.providers.JsonRpcProvider(providerUrl);
+const provider = new JsonRpcProvider(providerUrl);
 
 // Initialize contract
-const lendingPoolContract = new ethers.Contract(lendingPoolAddress, abi, provider);
+const lendingPoolContract = new Contract(lendingPoolAddress, abi, provider);
 
 
 //position
@@ -64,8 +64,36 @@ async function getMarketParams(market_id) {
 // (borrowShares * total borrow assets) / total borrow shares = debt
 // health factor = colateral * LTV / debt 
 
-getPositionData(market_id, wallet);
-getMarketData(market_id);
-getMarketParams(market_id);
+// getPositionData(market_id, wallet);
+// getMarketData(market_id);
+// getMarketParams(market_id);
 
 
+async function getValues(market_id, wallet) {
+  try {
+    const positionData = await lendingPoolContract.position(market_id, wallet);
+    const marketData = await lendingPoolContract.market(market_id);
+    const marketParams = await lendingPoolContract.idToMarketParams(market_id);
+    
+    const debt = (positionData.borrowShares * (marketData.totalBorrowAssets + 1n)) / (marketData.totalBorrowShares + 1000000n)
+    const healthFactor = (positionData.collateral * marketParams.lltv) / debt
+
+    // console.log('positionData==============================');
+    // console.log(positionData);
+    // console.log('marketData==============================');
+    // console.log(marketData);
+    // console.log('marketParams==============================');
+    // console.log(marketParams);
+    
+    console.log('values ==============================');
+    console.log(`Wallet: ${wallet}`);
+    console.log(`Debt: ${formatUnits(debt, 18)}`);
+    console.log(`healthFactor: ${ formatUnits(healthFactor, 18) }`);
+
+;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+getValues(market_id, wallet);
