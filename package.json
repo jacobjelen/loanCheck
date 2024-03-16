@@ -1,5 +1,5 @@
 {
-  "name": "loanCheck",
+  "name": "loan_check",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@morpho-org/morpho-blue": "^1.0.0",
     "ethers": "^5.5.4"
   }
 }
