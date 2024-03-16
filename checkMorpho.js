@@ -65,8 +65,8 @@ async function getMarketParams(market_id) {
 // health factor = colateral * LTV / debt 
 
 getPositionData(market_id, wallet);
-getMarketData(market_id, wallet);
-getMarketParams(market_id, wallet);
+getMarketData(market_id);
+getMarketParams(market_id);
 
 // async function getUserAccountData(userAddress) {
 //   try {
